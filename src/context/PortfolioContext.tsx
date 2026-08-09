@@ -79,7 +79,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (parsed?.profile?.title?.includes('Full-Stack')) {
           return initialPortfolioData;
         }
-        return { ...initialPortfolioData, ...parsed };
+        return { 
+          ...initialPortfolioData, 
+          ...parsed,
+          profile: {
+            ...initialPortfolioData.profile,
+            ...(parsed.profile || {})
+          },
+          theme: {
+            ...initialPortfolioData.theme,
+            ...(parsed.theme || {})
+          }
+        };
       }
     } catch (e) {
       console.error('Failed to load portfolio from localStorage', e);

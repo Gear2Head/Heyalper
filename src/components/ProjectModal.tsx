@@ -3,42 +3,75 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { X, Calendar, Zap, Github, Globe, BookOpen, Terminal, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Helper function to render text with clickable markdown links [text](url)
+// Helper function to render text with clickable markdown links [text](url) or raw URLs
 const renderTextWithMarkdownLinks = (text: string) => {
-  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  const elements = [];
+  const mdRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+  const parts = [];
   let lastIndex = 0;
   let match;
 
-  while ((match = regex.exec(text)) !== null) {
+  while ((match = mdRegex.exec(text)) !== null) {
     const matchIndex = match.index;
     const linkText = match[1];
     const linkUrl = match[2];
 
     if (matchIndex > lastIndex) {
-      elements.push(text.substring(lastIndex, matchIndex));
+      parts.push({ type: 'text', content: text.substring(lastIndex, matchIndex) });
     }
 
-    elements.push(
-      <a
-        key={matchIndex}
-        href={linkUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-[#0066CC] hover:text-[#0077ED] dark:text-[#2997FF] dark:hover:text-blue-300 font-semibold underline decoration-[#0066CC]/30 hover:decoration-[#0077ED] transition-colors"
-      >
-        {linkText}
-      </a>
-    );
-
-    lastIndex = regex.lastIndex;
+    parts.push({ type: 'link', text: linkText, url: linkUrl });
+    lastIndex = mdRegex.lastIndex;
   }
 
   if (lastIndex < text.length) {
-    elements.push(text.substring(lastIndex));
+    parts.push({ type: 'text', content: text.substring(lastIndex) });
   }
 
-  return elements.length > 0 ? elements : text;
+  const finalElements: React.ReactNode[] = [];
+  
+  parts.forEach((part, idx) => {
+    if (part.type === 'link') {
+      finalElements.push(
+        <a
+          key={`link-${idx}`}
+          href={part.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#0066CC] hover:text-[#0077ED] dark:text-[#2997FF] dark:hover:text-blue-300 font-semibold underline decoration-[#0066CC]/30 hover:decoration-[#0077ED] transition-colors"
+        >
+          {part.text}
+        </a>
+      );
+    } else {
+      const rawUrlRegex = /(https?:\/\/[^\s)]+)/g;
+      const subText = part.content || '';
+      const subParts = subText.split(rawUrlRegex);
+      
+      subParts.forEach((subPart, sIdx) => {
+        if (rawUrlRegex.test(subPart)) {
+          let cleanUrl = subPart;
+          if (cleanUrl.endsWith('/')) cleanUrl = cleanUrl.slice(0, -1);
+          let label = cleanUrl.replace(/^https?:\/\/(www\.)?/, '');
+
+          finalElements.push(
+            <a
+              key={`raw-${idx}-${sIdx}`}
+              href={subPart}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#0066CC] hover:text-[#0077ED] dark:text-[#2997FF] dark:hover:text-blue-300 font-semibold underline decoration-[#0066CC]/30 hover:decoration-[#0077ED] transition-colors"
+            >
+              {label}
+            </a>
+          );
+        } else {
+          finalElements.push(subPart);
+        }
+      });
+    }
+  });
+
+  return finalElements.length > 0 ? finalElements : text;
 };
 
 // Helper function to parse details text, split lists vertically and format links
