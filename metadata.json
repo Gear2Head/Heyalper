@@ -1,0 +1,6 @@
+{
+  "name": "Kişisel Portfolyo & Yönetim Paneli",
+  "description": "Üniversite başvuruları için Apple tarzı modern, minimalist ve animasyonlu portfolyo ve canlı içerik yönetim paneli.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
