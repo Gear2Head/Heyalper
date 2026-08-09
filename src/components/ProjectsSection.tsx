@@ -14,6 +14,7 @@ import {
   Globe
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { GithubHeatmap } from './GithubHeatmap';
 
 export const ProjectsSection: React.FC = () => {
   const { data, setSelectedProjectForModal, setIsAdminOpen, isAdminAuthenticated, t } = usePortfolio();
@@ -512,7 +513,9 @@ export const ProjectsSection: React.FC = () => {
           </div>
 
           {/* Right Column: Repositories List (9 cols) */}
-          <div className="md:col-span-9 space-y-4 font-sans">
+          <div className="md:col-span-9 space-y-6 font-sans">
+            {/* Premium GitHub Contribution Matrix */}
+            <GithubHeatmap />
             {/* GitHub style repository tab header */}
             <div className="flex items-center gap-2 pb-2 border-b border-[#d0d7de] dark:border-[#30363d] text-sm text-[#24292f] dark:text-[#adbac7] font-semibold">
               <span className="flex items-center gap-1.5 border-b-2 border-[#fd8c73] px-2 py-1.5 text-[#1F2328] dark:text-[#f0f6fc]">
