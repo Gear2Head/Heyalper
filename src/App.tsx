@@ -21,7 +21,7 @@ import { MetaTagUpdater } from './components/MetaTagUpdater';
 import { QuickActions } from './components/QuickActions';
 
 const MainContent: React.FC = () => {
-  const { data } = usePortfolio();
+  const { data, isAdminAuthenticated } = usePortfolio();
 
   return (
     <div className={`min-h-screen transition-colors duration-500 selection:bg-[#0066CC]/30 font-sans ${
@@ -66,7 +66,7 @@ const MainContent: React.FC = () => {
       <Footer />
 
       {/* Floating Quick Actions Menu */}
-      <QuickActions />
+      {isAdminAuthenticated && <QuickActions />}
 
       {/* Modals */}
       <ProjectModal />

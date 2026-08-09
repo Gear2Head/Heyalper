@@ -10,7 +10,8 @@ import {
   Zap, 
   Star,
   Plus,
-  ArrowRight
+  ArrowRight,
+  Globe
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -18,7 +19,7 @@ export const ProjectsSection: React.FC = () => {
   const { data, setSelectedProjectForModal, setIsAdminOpen, isAdminAuthenticated, t } = usePortfolio();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Tümü');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'github'>('grid');
 
   const getRadiusClass = () => {
     switch (data.theme.borderRadius) {
@@ -118,6 +119,17 @@ export const ProjectsSection: React.FC = () => {
               title="Liste Görünümü"
             >
               <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('github')}
+              className={`p-2 rounded-full text-xs transition-colors cursor-pointer ${
+                viewMode === 'github' 
+                  ? 'bg-white dark:bg-[#1D1D1F] text-[#1D1D1F] dark:text-white shadow-sm font-semibold' 
+                  : 'text-[#86868B] hover:text-[#1D1D1F] dark:hover:text-white'
+              }`}
+              title="GitHub Profil Görünümü"
+            >
+              <Github className="w-4 h-4" />
             </button>
           </div>
 
@@ -415,7 +427,7 @@ export const ProjectsSection: React.FC = () => {
             ))}
           </AnimatePresence>
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
         /* List Mode View */
         <div className="space-y-3">
           {filteredProjects.map((project) => (
@@ -455,6 +467,157 @@ export const ProjectsSection: React.FC = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+      ) : (
+        /* GitHub Profile Layout View */
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-4">
+          {/* Left Column: Profile Sidebar (3 cols) */}
+          <div className="md:col-span-3">
+            <div className="space-y-4 text-sm font-sans">
+              <div className="space-y-3">
+                <img
+                  src={data.profile.avatarUrl}
+                  alt="Avatar"
+                  className="w-32 h-32 md:w-full md:h-auto rounded-full border border-[#d0d7de] dark:border-[#30363d] shadow-sm max-w-[260px]"
+                />
+                <div>
+                  <h1 className="text-xl md:text-2xl font-bold text-[#1F2328] dark:text-[#f0f6fc] leading-tight">
+                    {data.profile.fullName}
+                  </h1>
+                  <p className="text-base text-[#57606a] dark:text-[#8b949e]">
+                    {data.profile.akaName || 'Gear2Head'}
+                  </p>
+                </div>
+              </div>
+              
+              <p className="text-sm font-normal text-[#1F2328] dark:text-[#f0f6fc] leading-relaxed">
+                {data.profile.bio}
+              </p>
+
+              <div className="space-y-2 text-xs text-[#57606a] dark:text-[#8b949e] pt-3 border-t border-[#d0d7de] dark:border-[#30363d]">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-[#8b949e]" />
+                  <a href="https://kirged.org" target="_blank" rel="noreferrer" className="hover:text-[#0969da] dark:hover:text-[#58a6ff] hover:underline font-semibold">
+                    kirged.org
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Github className="w-4 h-4 text-[#8b949e]" />
+                  <a href="https://github.com/Gear2Head" target="_blank" rel="noreferrer" className="hover:text-[#0969da] dark:hover:text-[#58a6ff] hover:underline">
+                    github.com/Gear2Head
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Repositories List (9 cols) */}
+          <div className="md:col-span-9 space-y-4 font-sans">
+            {/* GitHub style repository tab header */}
+            <div className="flex items-center gap-2 pb-2 border-b border-[#d0d7de] dark:border-[#30363d] text-sm text-[#24292f] dark:text-[#adbac7] font-semibold">
+              <span className="flex items-center gap-1.5 border-b-2 border-[#fd8c73] px-2 py-1.5 text-[#1F2328] dark:text-[#f0f6fc]">
+                <FolderKanban className="w-4 h-4" />
+                <span>Repositories</span>
+                <span className="bg-[#afb8c1]/20 px-2 py-0.5 rounded-full text-xs font-normal">
+                  {filteredProjects.length}
+                </span>
+              </span>
+            </div>
+
+            <div className="divide-y divide-[#d0d7de] dark:divide-[#30363d]">
+              {filteredProjects.map((project) => {
+                let langColor = '#f1e05a'; // JavaScript default
+                let langName = 'JavaScript';
+                if (project.tags.includes('TypeScript') || project.tags.includes('React')) {
+                  langColor = '#3178c6';
+                  langName = 'TypeScript';
+                } else if (project.tags.includes('PostgreSQL') || project.tags.includes('SQL')) {
+                  langColor = '#0064a5';
+                  langName = 'PL/pgSQL';
+                } else if (project.tags.includes('Claude Code') || project.tags.includes('Python')) {
+                  langColor = '#3572A5';
+                  langName = 'Python';
+                }
+
+                return (
+                  <div key={project.id} className="py-5 flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => setSelectedProjectForModal(project)}
+                          className="text-lg font-bold text-[#0969da] dark:text-[#58a6ff] hover:underline cursor-pointer text-left font-mono"
+                        >
+                          {project.id}
+                        </button>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-[#57606a] dark:text-[#8b949e] border border-[#d0d7de] dark:border-[#30363d]">
+                          Public
+                        </span>
+                        {project.featured && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30">
+                            Pinned
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-[#57606a] dark:text-[#8b949e] leading-relaxed">
+                        {project.subtitle} — {project.description}
+                      </p>
+
+                      {/* Topics */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {project.tags.slice(0, 5).map((t, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#ddf4ff] dark:bg-[#1C2C40] text-[#0969da] dark:text-[#58a6ff]"
+                          >
+                            {t.toLowerCase().replace(/\s+/g, '-')}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Repo Stats Footer */}
+                      <div className="flex items-center gap-4 text-xs text-[#57606a] dark:text-[#8b949e] pt-2 flex-wrap">
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: langColor }} />
+                          <span>{langName}</span>
+                        </span>
+                        <span className="flex items-center gap-1">
+                          ★ {project.featured ? '18' : '6'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          ⑂ {project.featured ? '4' : '1'}
+                        </span>
+                        <span>{t('Güncellendi:', 'Updated:')} {project.date}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex sm:flex-col items-stretch gap-1.5 flex-shrink-0 w-full sm:w-auto">
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 py-1.5 rounded-lg border border-[#d0d7de] dark:border-[#30363d] bg-[#f6f8fa] dark:bg-[#21262d] text-xs font-semibold text-[#24292f] dark:text-[#c9d1d9] text-center hover:bg-[#f3f4f6] dark:hover:bg-[#30363d] transition-colors"
+                        >
+                          Code
+                        </a>
+                      )}
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 py-1.5 rounded-lg border border-[#d0d7de] dark:border-[#30363d] bg-[#f6f8fa] dark:bg-[#21262d] text-xs font-semibold text-[#24292f] dark:text-[#c9d1d9] text-center hover:bg-[#f3f4f6] dark:hover:bg-[#30363d] transition-colors"
+                        >
+                          Website
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </section>

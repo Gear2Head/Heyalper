@@ -98,20 +98,172 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setIsAdminOpen(true);
   };
 
-  // Load initial portfolio data from Supabase DB via our Express backend
+const SUPABASE_URL = 'https://ljtiaevwznziihbndack.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqdGlhZXZ3em56aWloYm5kYWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NzIzMDYsImV4cCI6MjEwMTQ0ODMwNn0.q2oLTzz5z3NtP7drA12kqHIjvX0iKcvv65KZlnfSsz0';
+
+const supabaseHeaders = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`,
+  'Content-Type': 'application/json'
+};
+
+// Client-side mapping functions between database schema and API models
+function mapProfileDbToApi(db: any): any {
+  if (!db) return null;
+  return {
+    fullName: db.full_name,
+    title: db.title,
+    targetUniversity: db.target_university || '',
+    targetMajor: db.target_major || '',
+    bio: db.bio || '',
+    longBio: db.long_bio || '',
+    email: db.email || '',
+    location: db.location || '',
+    avatarUrl: db.avatar_url || '',
+    resumeUrl: db.resume_url || '',
+    githubUrl: db.github_url || '',
+    linkedinUrl: db.linkedin_url || '',
+    instagramUrl: db.instagram_url || '',
+    gpa: db.gpa || '',
+    satScore: db.sat_score || '',
+    graduationYear: db.graduation_year || '',
+    akaName: db.aka_name || '',
+    highlights: db.highlights || []
+  };
+}
+
+function mapProfileApiToDb(api: any): any {
+  return {
+    id: 1,
+    full_name: api.fullName,
+    title: api.title,
+    target_university: api.targetUniversity || '',
+    target_major: api.targetMajor || '',
+    bio: api.bio || '',
+    long_bio: api.longBio || '',
+    email: api.email || '',
+    location: api.location || '',
+    avatar_url: api.avatarUrl || '',
+    resume_url: api.resumeUrl || '',
+    github_url: api.githubUrl || '',
+    linkedin_url: api.linkedinUrl || '',
+    instagram_url: api.instagramUrl || '',
+    gpa: api.gpa || '',
+    sat_score: api.satScore || '',
+    graduation_year: api.graduationYear || '',
+    aka_name: api.akaName || '',
+    highlights: api.highlights || []
+  };
+}
+
+function mapProjectDbToApi(db: any): any {
+  return {
+    id: db.id,
+    title: db.title,
+    subtitle: db.subtitle || '',
+    category: db.category || '',
+    description: db.description || '',
+    fullDetails: db.full_details || '',
+    imageUrl: db.image_url || '',
+    tags: db.tags || [],
+    githubUrl: db.github_url || undefined,
+    liveUrl: db.live_url || undefined,
+    wikiUrl: db.wiki_url || undefined,
+    manageUrl: db.manage_url || undefined,
+    discordUrl: db.discord_url || undefined,
+    discordSubUrl: db.discord_sub_url || undefined,
+    featured: !!db.featured,
+    date: db.date || '',
+    metrics: db.metrics || undefined,
+    archived: !!db.archived
+  };
+}
+
+function mapProjectApiToDb(api: any): any {
+  return {
+    id: api.id,
+    title: api.title,
+    subtitle: api.subtitle || '',
+    category: api.category || '',
+    description: api.description || '',
+    full_details: api.fullDetails || '',
+    image_url: api.imageUrl || '',
+    tags: api.tags || [],
+    github_url: api.githubUrl || null,
+    live_url: api.liveUrl || null,
+    wiki_url: api.wikiUrl || null,
+    manage_url: api.manageUrl || null,
+    discord_url: api.discordUrl || null,
+    discord_sub_url: api.discordSubUrl || null,
+    featured: !!api.featured,
+    date: api.date || '',
+    metrics: api.metrics || null,
+    archived: !!api.archived
+  };
+}
+
+function mapCertificateDbToApi(db: any): any {
+  return {
+    id: db.id,
+    title: db.title,
+    issuer: db.issuer || '',
+    date: db.date || '',
+    credentialUrl: db.credential_url || undefined,
+    imageUrl: db.image_url || undefined,
+    code: db.code || undefined
+  };
+}
+
+function mapCertificateApiToDb(api: any): any {
+  return {
+    id: api.id,
+    title: api.title,
+    issuer: api.issuer || '',
+    date: api.date || '',
+    credential_url: api.credentialUrl || null,
+    image_url: api.imageUrl || null,
+    code: api.code || null
+  };
+}
+
+const hashPasscode = async (text: string) => {
+  const msgUint8 = new TextEncoder().encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+};
+
+  // Load initial portfolio data directly from Supabase DB
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const res = await fetch('/api/portfolio');
-        const result = await res.json();
-        if (result.success && result.data && result.data.profile) {
+        const [profileRes, projectsRes, academicRes, skillsRes, certsRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}/rest/v1/profile?select=*`, { headers: supabaseHeaders }).then(r => r.json()),
+          fetch(`${SUPABASE_URL}/rest/v1/projects?select=*&order=id`, { headers: supabaseHeaders }).then(r => r.json()),
+          fetch(`${SUPABASE_URL}/rest/v1/academic_entries?select=*`, { headers: supabaseHeaders }).then(r => r.json()),
+          fetch(`${SUPABASE_URL}/rest/v1/skill_categories?select=*`, { headers: supabaseHeaders }).then(r => r.json()),
+          fetch(`${SUPABASE_URL}/rest/v1/certificates?select=*`, { headers: supabaseHeaders }).then(r => r.json())
+        ]);
+
+        const profile = profileRes && profileRes.length > 0 ? mapProfileDbToApi(profileRes[0]) : null;
+        const projects = Array.isArray(projectsRes) ? projectsRes.map(mapProjectDbToApi) : [];
+        const academicEntries = Array.isArray(academicRes) ? academicRes : [];
+        const skillCategories = Array.isArray(skillsRes) ? skillsRes : [];
+        const certificates = Array.isArray(certsRes) ? certsRes.map(mapCertificateDbToApi) : [];
+
+        if (profile) {
           setData((prev) => ({
             ...prev,
-            ...result.data
+            profile,
+            projects,
+            academicEntries,
+            skillCategories,
+            certificates
           }));
         }
       } catch (e) {
-        console.error('Failed to fetch from DB, using local storage cache', e);
+        console.error('Failed to fetch from Supabase, using local storage cache', e);
       }
     };
     fetchPortfolio();
@@ -122,23 +274,66 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
       
-      if (isAdminAuthenticated) {
-        fetch('/api/portfolio', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'x-admin-passcode': sessionStorage.getItem('adminPasscode') || ''
-          },
-          body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(res => {
-          if (res.success) console.log('Portfolio auto-synced to database');
-        })
-        .catch(err => console.error('Database auto-sync failed', err));
-      }
+      const syncWithSupabase = async () => {
+        if (!isAdminAuthenticated) return;
+        const adminPasscode = sessionStorage.getItem('adminPasscode');
+        if (adminPasscode !== 'sener123' && adminPasscode !== 'admin123') return;
+
+        // 1. Sync Profile (PATCH row id 1)
+        const profileDb = mapProfileApiToDb(data.profile);
+        await fetch(`${SUPABASE_URL}/rest/v1/profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: supabaseHeaders,
+          body: JSON.stringify(profileDb)
+        });
+
+        // 2. Overwrite Projects
+        await fetch(`${SUPABASE_URL}/rest/v1/projects?id=not.is.null`, { method: 'DELETE', headers: supabaseHeaders });
+        if (data.projects.length > 0) {
+          const projectsDb = data.projects.map(mapProjectApiToDb);
+          await fetch(`${SUPABASE_URL}/rest/v1/projects`, {
+            method: 'POST',
+            headers: supabaseHeaders,
+            body: JSON.stringify(projectsDb)
+          });
+        }
+
+        // 3. Overwrite Academic Entries
+        await fetch(`${SUPABASE_URL}/rest/v1/academic_entries?id=not.is.null`, { method: 'DELETE', headers: supabaseHeaders });
+        if (data.academicEntries.length > 0) {
+          await fetch(`${SUPABASE_URL}/rest/v1/academic_entries`, {
+            method: 'POST',
+            headers: supabaseHeaders,
+            body: JSON.stringify(data.academicEntries)
+          });
+        }
+
+        // 4. Overwrite Skills
+        await fetch(`${SUPABASE_URL}/rest/v1/skill_categories?id=not.is.null`, { method: 'DELETE', headers: supabaseHeaders });
+        if (data.skillCategories.length > 0) {
+          await fetch(`${SUPABASE_URL}/rest/v1/skill_categories`, {
+            method: 'POST',
+            headers: supabaseHeaders,
+            body: JSON.stringify(data.skillCategories)
+          });
+        }
+
+        // 5. Overwrite Certificates
+        await fetch(`${SUPABASE_URL}/rest/v1/certificates?id=not.is.null`, { method: 'DELETE', headers: supabaseHeaders });
+        if (data.certificates.length > 0) {
+          const certsDb = data.certificates.map(mapCertificateApiToDb);
+          await fetch(`${SUPABASE_URL}/rest/v1/certificates`, {
+            method: 'POST',
+            headers: supabaseHeaders,
+            body: JSON.stringify(certsDb)
+          });
+        }
+        console.log('Direct Supabase sync complete');
+      };
+
+      syncWithSupabase();
     } catch (e) {
-      console.error('Failed to save to localStorage', e);
+      console.error('Failed to save to localStorage or sync to Supabase', e);
     }
   }, [data, isAdminAuthenticated]);
 

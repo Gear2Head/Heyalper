@@ -1,7 +1,81 @@
 import React from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { X, ExternalLink, Github, Zap, Calendar } from 'lucide-react';
+import { X, Calendar, Zap, Github, Globe, BookOpen, Terminal, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Helper function to render text with clickable markdown links [text](url)
+const renderTextWithMarkdownLinks = (text: string) => {
+  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const elements = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    const matchIndex = match.index;
+    const linkText = match[1];
+    const linkUrl = match[2];
+
+    if (matchIndex > lastIndex) {
+      elements.push(text.substring(lastIndex, matchIndex));
+    }
+
+    elements.push(
+      <a
+        key={matchIndex}
+        href={linkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[#0066CC] hover:text-[#0077ED] dark:text-[#2997FF] dark:hover:text-blue-300 font-semibold underline decoration-[#0066CC]/30 hover:decoration-[#0077ED] transition-colors"
+      >
+        {linkText}
+      </a>
+    );
+
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    elements.push(text.substring(lastIndex));
+  }
+
+  return elements.length > 0 ? elements : text;
+};
+
+// Helper function to parse details text, split lists vertically and format links
+const parseDetailsAndLists = (text: string) => {
+  if (!text) return null;
+
+  // Split text by numbered list markers (e.g. 1., 2., 3.) while keeping the marker
+  const parts = text.split(/(?=\b\d+\.\s+)/);
+
+  return (
+    <div className="space-y-4">
+      {parts.map((part, index) => {
+        const content = part.trim();
+        if (!content) return null;
+
+        const isListItem = /^\d+\.\s+/.test(content);
+        const textContent = renderTextWithMarkdownLinks(content);
+
+        if (isListItem) {
+          return (
+            <div key={index} className="pl-4 border-l-2 border-[#0066CC]/20 dark:border-blue-500/20 py-1.5 my-2">
+              <p className="text-sm leading-relaxed text-[#1D1D1F] dark:text-[#E8E8ED]">
+                {textContent}
+              </p>
+            </div>
+          );
+        }
+
+        return (
+          <p key={index} className="text-sm leading-relaxed text-[#1D1D1F] dark:text-[#E8E8ED]">
+            {textContent}
+          </p>
+        );
+      })}
+    </div>
+  );
+};
 
 export const ProjectModal: React.FC = () => {
   const { selectedProjectForModal, setSelectedProjectForModal, t } = usePortfolio();
@@ -75,7 +149,7 @@ export const ProjectModal: React.FC = () => {
             </div>
 
             {/* Scrollable Details Content */}
-            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-[#1D1D1F] dark:text-[#F5F5F7]">
+            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-[#1D1D1F] dark:text-[#F5F5F7] custom-scrollbar">
               <div className="flex items-center justify-between text-xs text-[#86868B] pb-3 border-b border-[#D2D2D7]/50 dark:border-[#333336]">
                 <span className="flex items-center gap-1.5 font-medium">
                   <Calendar className="w-4 h-4 text-[#0066CC]" />
@@ -84,13 +158,13 @@ export const ProjectModal: React.FC = () => {
                 <span className="font-mono">ID: {selectedProjectForModal.id}</span>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <h3 className="text-xs font-bold text-[#86868B] uppercase tracking-widest">
                   {t('Proje Detayları & Mühendislik Yaklaşımı', 'Project Details & Engineering Approach')}
                 </h3>
-                <p className="text-sm leading-relaxed text-[#1D1D1F] dark:text-[#E8E8ED] font-normal">
-                  {selectedProjectForModal.fullDetails || selectedProjectForModal.description}
-                </p>
+                <div className="font-normal">
+                  {parseDetailsAndLists(selectedProjectForModal.fullDetails || selectedProjectForModal.description)}
+                </div>
               </div>
 
               {/* Tech Stack */}
@@ -111,16 +185,16 @@ export const ProjectModal: React.FC = () => {
               </div>
 
               {/* Action Links */}
-              <div className="pt-4 border-t border-[#D2D2D7]/50 dark:border-[#333336] flex flex-wrap items-center justify-end gap-3">
+              <div className="pt-4 border-t border-[#D2D2D7]/50 dark:border-[#333336] flex flex-wrap items-center justify-end gap-2">
                 {selectedProjectForModal.githubUrl && (
                   <a
                     href={selectedProjectForModal.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#F5F5F7] dark:bg-[#2C2C2E] hover:bg-[#E8E8ED] dark:hover:bg-[#3A3A3C] text-xs font-semibold text-[#1D1D1F] dark:text-white transition-colors"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold text-zinc-900 dark:text-white transition-colors"
                   >
                     <Github className="w-4 h-4" />
-                    <span>{t('GitHub Deposu', 'GitHub Repository')}</span>
+                    <span>GitHub</span>
                   </a>
                 )}
 
@@ -129,10 +203,58 @@ export const ProjectModal: React.FC = () => {
                     href={selectedProjectForModal.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0066CC] hover:bg-[#0077ED] text-white text-xs font-semibold transition-colors shadow-sm"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-xs font-semibold text-white transition-colors"
                   >
-                    <span>{t('Canlı Önizleme / Demo', 'Live Preview / Demo')}</span>
-                    <ExternalLink className="w-4 h-4" />
+                    <Globe className="w-4 h-4" />
+                    <span>{t('Web Sitesi', 'Web Site')}</span>
+                  </a>
+                )}
+
+                {selectedProjectForModal.wikiUrl && (
+                  <a
+                    href={selectedProjectForModal.wikiUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#AF52DE]/15 hover:bg-[#AF52DE]/25 dark:bg-[#AF52DE]/10 dark:hover:bg-[#AF52DE]/20 text-xs font-semibold text-[#8E2EB2] dark:text-[#BF5AF2] transition-colors"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    <span>Wiki</span>
+                  </a>
+                )}
+
+                {selectedProjectForModal.manageUrl && (
+                  <a
+                    href={selectedProjectForModal.manageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-xs font-semibold text-emerald-600 dark:text-[#30D158] transition-colors"
+                  >
+                    <Terminal className="w-4 h-4" />
+                    <span>Manage</span>
+                  </a>
+                )}
+
+                {selectedProjectForModal.discordUrl && (
+                  <a
+                    href={selectedProjectForModal.discordUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5865F2]/15 hover:bg-[#5865F2]/25 dark:bg-[#5865F2]/10 dark:hover:bg-[#5865F2]/20 text-xs font-semibold text-[#404EED] dark:text-[#5865F2] transition-colors"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Discord</span>
+                  </a>
+                )}
+
+                {selectedProjectForModal.discordSubUrl && (
+                  <a
+                    href={selectedProjectForModal.discordSubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5865F2]/15 hover:bg-[#5865F2]/25 dark:bg-[#5865F2]/10 dark:hover:bg-[#5865F2]/20 text-xs font-semibold text-[#404EED] dark:text-[#5865F2] transition-colors"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>{selectedProjectForModal.id === 'adalances-community' ? t('Yedek Sunucu', 'Alt Discord') : t('Hytale Sunucusu', 'Hytale Discord')}</span>
                   </a>
                 )}
               </div>
