@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PortfolioData, Profile, Project, AcademicEntry, SkillCategory, Certificate, ThemeSettings } from '../types';
 import { initialPortfolioData } from '../data/initialData';
+import { translations } from '../data/translations';
+
 
 export type Language = 'tr' | 'en';
 
@@ -8,7 +10,7 @@ interface PortfolioContextType {
   data: PortfolioData;
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: <T extends React.ReactNode>(tr: T, en: T) => T;
+  t: (keyOrTr: any, en?: any) => any;
   updateProfile: (profile: Partial<Profile>) => void;
   addProject: (project: Omit<Project, 'id'>) => void;
   updateProject: (id: string, project: Partial<Project>) => void;
@@ -66,8 +68,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  const t = <T extends React.ReactNode>(tr: T, en: T): T => {
-    return language === 'en' ? en : tr;
+  const t = (keyOrTr: any, en?: any): any => {
+    if (en !== undefined) {
+      return language === 'en' ? en : keyOrTr;
+    }
+    if (typeof keyOrTr !== 'string') return keyOrTr;
+    const keys = keyOrTr.split('.');
+    let obj: any = translations[language];
+    for (const key of keys) {
+      if (obj && key in obj) {
+        obj = obj[key];
+      } else {
+        return keyOrTr;
+      }
+    }
+    return typeof obj === 'string' || React.isValidElement(obj) ? obj : keyOrTr;
   };
 
   const [data, setData] = useState<PortfolioData>(() => {

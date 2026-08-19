@@ -2,7 +2,8 @@ import React from 'react';
 import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { BentoGrid } from './components/BentoGrid';
+import { GKSCard } from './components/GKSCard';
+import { MotivationSection } from './components/MotivationSection';
 import { ProjectsSection } from './components/ProjectsSection';
 import { AcademicTimeline } from './components/AcademicTimeline';
 import { InternationalProjectsSection } from './components/InternationalProjectsSection';
@@ -52,7 +53,8 @@ const MainContent: React.FC = () => {
       
       <main className="space-y-12">
         <section id="hero"><Hero /></section>
-        <section id="bento"><BentoGrid /></section>
+        <section id="gks"><GKSCard /></section>
+        <section id="motivation"><MotivationSection /></section>
         <section id="impact"><ImpactMetrics /></section>
         <section id="projects"><ProjectsSection /></section>
         <section id="academic"><AcademicTimeline /></section>
