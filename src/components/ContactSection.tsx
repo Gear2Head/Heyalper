@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Mail, MapPin, Send, Download, CheckCircle2, Github, Linkedin, Twitter, Instagram, Sparkles } from 'lucide-react';
+import { Mail, MapPin, Send, Download, CheckCircle2, Github, Instagram, Sparkles, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const ContactSection: React.FC = () => {
-  const { data } = usePortfolio();
+  const { data, t } = usePortfolio();
   const [sent, setSent] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', subject: 'Üniversite Başvurusu / İşbirliği', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,7 +14,7 @@ export const ContactSection: React.FC = () => {
     setSent(true);
     setTimeout(() => {
       setSent(false);
-      setFormData({ name: '', email: '', subject: 'Üniversite Başvurusu / İşbirliği', message: '' });
+      setFormData({ name: '', email: '', subject: '', message: '' });
     }, 4000);
   };
 
@@ -32,13 +32,13 @@ export const ContactSection: React.FC = () => {
     <section id="contact" className="py-16 px-4 max-w-6xl mx-auto space-y-8">
       <div>
         <span className="text-xs font-bold uppercase tracking-widest text-[#0066CC] mb-1 block">
-          İLETİŞİM & DANIŞMANLIK
+          {t('contact.title')}
         </span>
         <h2 className="text-3xl sm:text-4xl font-semibold text-[#1D1D1F] dark:text-white tracking-tight">
-          Benimle İletişime Geçin
+          {t('Benimle İletişime Geçin', 'Contact Me')}
         </h2>
         <p className="text-sm text-[#86868B] mt-1 max-w-xl font-medium">
-          Üniversite başvuru komiteleri, akademisyenler ve proje ortaklıkları için doğrudan mesaj gönderebilirsiniz.
+          {t('contact.subtitle')}
         </p>
       </div>
 
@@ -47,7 +47,7 @@ export const ContactSection: React.FC = () => {
         <div className="lg:col-span-5 space-y-4">
           <div className="p-7 rounded-[32px] bg-white dark:bg-[#1D1D1F] border border-[#D2D2D7] dark:border-[#333336] shadow-sm space-y-5">
             <h3 className="text-lg font-bold text-[#1D1D1F] dark:text-white">
-              İletişim Kanalları
+              {t('İletişim Kanalları', 'Contact Channels')}
             </h3>
 
             <div className="space-y-3 text-xs">
@@ -59,7 +59,7 @@ export const ContactSection: React.FC = () => {
                   <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-[#86868B] font-medium">E-Posta</div>
+                  <div className="text-[10px] text-[#86868B] font-medium">{t('contact.emailLabel')}</div>
                   <div className="font-bold text-[#1D1D1F] dark:text-white">{data.profile.email}</div>
                 </div>
               </a>
@@ -74,7 +74,7 @@ export const ContactSection: React.FC = () => {
                   <Instagram className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-[#86868B] font-medium">Instagram</div>
+                  <div className="text-[10px] text-[#86868B] font-medium">{t('Instagram')}</div>
                   <div className="font-bold text-[#1D1D1F] dark:text-white">@gear2head</div>
                 </div>
               </a>
@@ -84,8 +84,8 @@ export const ContactSection: React.FC = () => {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-[#86868B] font-medium">Konum</div>
-                  <div className="font-bold text-[#1D1D1F] dark:text-white">{data.profile.location}</div>
+                  <div className="text-[10px] text-[#86868B] font-medium">{t('contact.locationLabel')}</div>
+                  <div className="font-bold text-[#1D1D1F] dark:text-white">{t('contact.locationValue')}</div>
                 </div>
               </div>
             </div>
@@ -99,7 +99,7 @@ export const ContactSection: React.FC = () => {
                 className="w-full flex items-center justify-center gap-2 p-3.5 rounded-full bg-[#1D1D1F] text-white dark:bg-white dark:text-[#1D1D1F] font-semibold text-xs transition-opacity hover:opacity-90 shadow-sm"
               >
                 <Download className="w-4 h-4" />
-                <span>Akademik CV & Özgeçmiş İndir (PDF)</span>
+                <span>{t('Akademik CV & Özgeçmiş İndir (PDF)', 'Download Academic CV (PDF)')}</span>
               </a>
             )}
           </div>
@@ -112,18 +112,18 @@ export const ContactSection: React.FC = () => {
             className="p-7 rounded-[32px] bg-white dark:bg-[#1D1D1F] border border-[#D2D2D7] dark:border-[#333336] shadow-sm space-y-4"
           >
             <h3 className="text-lg font-bold text-[#1D1D1F] dark:text-white">
-              Anlık Mesaj Gönder
+              {t('Anlık Mesaj Gönder', 'Send Instant Message')}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#86868B]">
-                  Adınız & Soyadınız
+                  {t('Adınız & Soyadınız', 'Your Name & Surname')}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Prof. Dr. Ahmet Yılmaz"
+                  placeholder={t('Prof. Dr. Ahmet Yılmaz', 'Prof. Dr. John Doe')}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#D2D2D7]/60 dark:border-white/10 text-xs text-[#1D1D1F] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0066CC]/50"
@@ -132,12 +132,12 @@ export const ContactSection: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#86868B]">
-                  E-Posta Adresiniz
+                  {t('E-Posta Adresiniz', 'Your Email Address')}
                 </label>
                 <input
                   type="email"
                   required
-                  placeholder="ahmet@universite.edu.tr"
+                  placeholder="name@university.edu"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#D2D2D7]/60 dark:border-white/10 text-xs text-[#1D1D1F] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0066CC]/50"
@@ -147,11 +147,12 @@ export const ContactSection: React.FC = () => {
 
             <div className="space-y-1">
               <label className="text-xs font-semibold text-[#86868B]">
-                Konu
+                {t('contact.formSubject')}
               </label>
               <input
                 type="text"
                 value={formData.subject}
+                placeholder={t('Üniversite Başvurusu / İşbirliği', 'University Admission / Cooperation')}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#D2D2D7]/60 dark:border-white/10 text-xs text-[#1D1D1F] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0066CC]/50"
               />
@@ -159,12 +160,12 @@ export const ContactSection: React.FC = () => {
 
             <div className="space-y-1">
               <label className="text-xs font-semibold text-[#86868B]">
-                Mesajınız
+                {t('contact.formMessage')}
               </label>
               <textarea
                 rows={4}
                 required
-                placeholder="Başvuru dosyanız veya projeniz hakkında detaylı notlarınızı iletebilirsiniz..."
+                placeholder={t('Mesajınızı buraya yazabilirsiniz...', 'You can write your message here...')}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-2xl bg-[#F5F5F7] dark:bg-[#2C2C2E] border border-[#D2D2D7]/60 dark:border-white/10 text-xs text-[#1D1D1F] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0066CC]/50 resize-none"
@@ -179,16 +180,44 @@ export const ContactSection: React.FC = () => {
               {sent ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  <span>Mesajınız İletildi! Teşekkürler.</span>
+                  <span>{t('Mesajınız İletildi! Teşekkürler.', 'Your message has been sent! Thank you.')}</span>
                 </>
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  <span>Mesajı Gönder</span>
+                  <span>{t('contact.formSubmit')}</span>
                 </>
               )}
             </button>
           </form>
+        </div>
+      </div>
+
+      {/* Referrals Section */}
+      <div className="pt-8 border-t border-[#D2D2D7]/30 dark:border-white/5 space-y-6">
+        <h3 className="text-xl font-bold text-[#1D1D1F] dark:text-white flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-amber-500 animate-pulse-slow" />
+          <span>{t('contact.recommendations')}</span>
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 rounded-2xl bg-[#F5F5F7]/50 dark:bg-[#2C2C2E]/40 border border-[#D2D2D7]/50 dark:border-white/5 space-y-2">
+            <h4 className="text-sm font-bold text-[#1D1D1F] dark:text-white">{t('contact.ref1Title')}</h4>
+            <p className="text-xs text-[#86868B] leading-relaxed">{t('contact.ref1Desc')}</p>
+            <span className="text-[10px] font-semibold text-[#0066CC] dark:text-blue-400 block pt-1">{t('contact.placeholder')}</span>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-[#F5F5F7]/50 dark:bg-[#2C2C2E]/40 border border-[#D2D2D7]/50 dark:border-white/5 space-y-2">
+            <h4 className="text-sm font-bold text-[#1D1D1F] dark:text-white">{t('contact.ref2Title')}</h4>
+            <p className="text-xs text-[#86868B] leading-relaxed">{t('contact.ref2Desc')}</p>
+            <span className="text-[10px] font-semibold text-[#0066CC] dark:text-blue-400 block pt-1">{t('contact.placeholder')}</span>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-[#F5F5F7]/50 dark:bg-[#2C2C2E]/40 border border-[#D2D2D7]/50 dark:border-white/5 space-y-2">
+            <h4 className="text-sm font-bold text-[#1D1D1F] dark:text-white">{t('contact.ref3Title')}</h4>
+            <p className="text-xs text-[#86868B] leading-relaxed">{t('contact.ref3Desc')}</p>
+            <span className="text-[10px] font-semibold text-[#0066CC] dark:text-blue-400 block pt-1">{t('contact.placeholder')}</span>
+          </div>
         </div>
       </div>
     </section>

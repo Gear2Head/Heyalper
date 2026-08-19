@@ -270,15 +270,15 @@ export const ProjectsSection: React.FC = () => {
                           <>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span><strong>wiki.adalances.com</strong> Bilgi Bankası Kural & Rehber İçerikleri</span>
+                              <span><strong>wiki.adalances.com</strong> {t('Bilgi Bankası Kural & Rehber İçerikleri', 'Knowledge Base Rules & Guides')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span><strong>Adalances Yetkili Kitapçığı</strong> (Handbook) Prosedür Yazımı</span>
+                              <span><strong>{t('Adalances Yetkili Kitapçığı', 'Adalances Staff Handbook')}</strong> {t('(Handbook) Prosedür Yazımı', 'Procedure Writing')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>Google Form Aday Taraması & Canlı Mülakat Değerlendirmeleri</span>
+                              <span>{t('Google Form Aday Taraması & Canlı Mülakat Değerlendirmeleri', 'Google Form Screening & Live Interviews')}</span>
                             </li>
                           </>
                         )}
@@ -286,15 +286,15 @@ export const ProjectsSection: React.FC = () => {
                           <>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span><strong>wiki.lutheus.com</strong> Oyun & Topluluk Rehberleri</span>
+                              <span><strong>wiki.lutheus.com</strong> {t('Oyun & Topluluk Rehberleri', 'Game & Community Guides')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span><strong>Lutheus Discord Moderasyon Kitapçığı</strong> & Notion Hiyerarşi</span>
+                              <span><strong>{t('Lutheus Discord Moderasyon Kitapçığı', 'Lutheus Discord Moderation Handbook')}</strong> {t('& Notion Hiyerarşi', '& Notion Hierarchy')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>Lutheus Manage AI Dashboard, KPI Puanlama & SQL Veri Paneli</span>
+                              <span>{t('Lutheus Manage AI Dashboard, KPI Puanlama & SQL Veri Paneli', 'Lutheus Manage AI Dashboard, KPI Scoring & SQL Panel')}</span>
                             </li>
                           </>
                         )}
@@ -302,15 +302,15 @@ export const ProjectsSection: React.FC = () => {
                           <>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>wiki.adalances.com & wiki.lutheus.com Mimarisi</span>
+                              <span>wiki.adalances.com & wiki.lutheus.com {t('Mimarisi', 'Architecture')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>Moderasyon Kitapçığı, Standart Ceza Prosedürleri & Point Train</span>
+                              <span>{t('Moderasyon Kitapçığı, Standart Ceza Prosedürleri & Point Train', 'Moderation Handbook, Penalty Procedures & Point Train')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>Form İnceleme & Canlı Sesli Yetkili Aday Mülakatları</span>
+                              <span>{t('Form İnceleme & Canlı Sesli Yetkili Aday Mülakatları', 'Form Evaluation & Live Voice Candidate Interviews')}</span>
                             </li>
                           </>
                         )}
@@ -318,11 +318,11 @@ export const ProjectsSection: React.FC = () => {
                           <>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>Kirged.org AI Workflows & Script Otomasyonları</span>
+                              <span>{t('Kirged.org AI Workflows & Script Otomasyonları', 'Kirged.org AI Workflows & Script Automations')}</span>
                             </li>
                             <li className="flex items-center gap-1.5">
                               <span className="w-1 h-1 rounded-full bg-[#0066CC]" />
-                              <span>SQL Veritabanı Sorguları & Analiz Betikleri</span>
+                              <span>{t('SQL Veritabanı Sorguları & Analiz Betikleri', 'SQL Database Queries & Analytical Scripts')}</span>
                             </li>
                           </>
                         )}

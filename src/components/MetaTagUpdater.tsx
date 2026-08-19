@@ -8,7 +8,8 @@ export const MetaTagUpdater: React.FC = () => {
   useEffect(() => {
     const sectionIds = [
       'hero',
-      'bento',
+      'gks',
+      'motivation',
       'impact',
       'projects',
       'academic',
@@ -63,14 +64,25 @@ export const MetaTagUpdater: React.FC = () => {
         );
         break;
 
-      case 'bento':
+      case 'gks':
         sectionTitle = t(
-          `Özet & Başarı Metrikleri | ${name}`,
-          `Executive Summary & Metrics | ${name}`
+          `GKS Profili & Başarı Metrikleri | ${name}`,
+          `GKS Profile & Academic Metrics | ${name}`
         );
         sectionDescription = t(
-          `Genel OBP (95.4/100), IELTS C1 dil yeterliliği, 228k+ üyeli Adalances sunucu moderasyonu ve AI operasyon yetkinlikleri özeti.`,
-          `High school GPA (95.4/100), IELTS C1 language certification, 228k+ community lead, and AI automation highlights.`
+          `Genel OBP (94.4/100), IELTS C1 dil yeterliliği, 228k+ üyeli Adalances sunucu moderasyonu ve AI operasyon yetkinlikleri özeti.`,
+          `High school GPA (94.4/100), IELTS C1 language certification, 228k+ community lead, and AI automation highlights.`
+        );
+        break;
+
+      case 'motivation':
+        sectionTitle = t(
+          `Akademik Motivasyon & Vizyon | ${name}`,
+          `Academic Motivation & Vision | ${name}`
+        );
+        sectionDescription = t(
+          `Neden Yapay Zeka? Neden Kore? sorularına cevaplar ve Kore devlet bursu başvuru motivasyonu.`,
+          `Why AI? Why Korea? Answers to GKS application motivations and vision.`
         );
         break;
 
@@ -80,8 +92,8 @@ export const MetaTagUpdater: React.FC = () => {
           `Community Scale & Impact | ${name}`
         );
         sectionDescription = t(
-          `298.000+ toplam üye, 15.900+ anlık aktif kullanıcı, %99.2 otomasyon ve canlı moderasyon KPI verileri.`,
-          `Over 298,000 members, 15,900+ concurrent active online users, and %99.2 automated moderation metric analytics.`
+          `297.800+ toplam üye, 15.934+ anlık aktif kullanıcı, %90.8 otomasyon ve canlı moderasyon KPI verileri.`,
+          `Over 297,800 members, 15,934+ concurrent active online users, and %90.8 automated moderation metric analytics.`
         );
         break;
 
@@ -102,8 +114,8 @@ export const MetaTagUpdater: React.FC = () => {
           `Academic History & Honors | ${name}`
         );
         sectionDescription = t(
-          `Lise akademik başarı geçmişi, 95.4 OBP, eTwinning Pupil Quality Label (Kalite Etiketi) ve Bilgisayar Mühendisliği hedefi.`,
-          `High school academic honors, 95.4 GPA, eTwinning Pupil Quality Label, and Computer Science aspirations.`
+          `Lise akademik başarı geçmişi, 94.4 OBP, eTwinning Pupil Quality Label (Kalite Etiketi) ve Bilgisayar Mühendisliği hedefi.`,
+          `High school academic honors, 94.4 GPA, eTwinning Pupil Quality Label, and Computer Science aspirations.`
         );
         break;
 

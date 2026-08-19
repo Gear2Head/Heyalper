@@ -62,7 +62,7 @@ export const Footer: React.FC = () => {
             className="hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center gap-1"
           >
             <Mail className="w-3.5 h-3.5" />
-            <span>E-Posta</span>
+            <span>{t('E-Posta', 'Email')}</span>
           </a>
 
           {/* Admin Login link at the very bottom */}
@@ -79,7 +79,7 @@ export const Footer: React.FC = () => {
         <button
           onClick={scrollToTop}
           className="p-2.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-          title="Yukarı Çık"
+          title={t('Yukarı Çık', 'Scroll to Top')}
         >
           <ArrowUp className="w-4 h-4" />
         </button>
